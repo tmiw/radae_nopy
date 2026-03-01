@@ -18,16 +18,17 @@ make -j4
 
 ### RADE Demod: WAV RADE → WAV Speech Audio
 Take a wav file off air and produce a demodulated wav file
-
+```
 Usage:
-rade_demod [-v 0|1|2] <input.wav> <output.wav>
+rade_demod_wav [-v 0|1|2] <input.wav> <output.wav>
+```
 
 ### RADE Modulate: WAV Speech Audio → WAV RADE
 Take a wav file with speech in it and produce a RADE OFDM encoded output wav file ready for transmission.
-
+```
 Usage:
-rade_modulate [-v 0|1|2] <intput.wav> <output.wav>
-
+rade_modulate_wav [-v 0|1|2] <intput.wav> <output.wav>
+```
 
 ### Encode: WAV → IQ
 ```
@@ -45,13 +46,6 @@ cat tx.iq | \
 ```
 
 ### Decode: WAV RADE → WAV (multiple steps)
-```
-usage: radae_rx [options]
-  -h, --help           Show this help
-  --model_name FILE    Path to model (ignored, uses built-in weights)
-  -v LEVEL             Verbosity level (0, 1, or 2)
-  --no-unsync          Disable automatic unsync
-```
 
 ```
 sox ../FDV_offair.wav -r 8000 -e float -b 32 -c 1 -t raw - | \
