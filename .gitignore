@@ -1,3 +1,5 @@
 build/
 tx.iq
 .claude/
+.vscode/
+.cache/
