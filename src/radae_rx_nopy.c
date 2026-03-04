@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FILE *feoo_bits = fopen("eoo_rx.f32","rb");
+    FILE *feoo_bits = fopen("eoo_rx.f32","wb");
 
     /* Main processing loop */
     int frame_count = 0;
