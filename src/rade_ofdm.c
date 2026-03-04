@@ -227,9 +227,10 @@ void rade_ofdm_insert_cp(const rade_ofdm *ofdm, RADE_COMP *time_out, const RADE_
     int Ncp = ofdm->ncp;
 
     /* Cyclic prefix: copy last Ncp samples to front */
-    for (int n = 0; n < Ncp; n++) {
-        time_out[n] = time_in[M - Ncp + n];
-    }
+    memcpy(time_out, &time_in[M - Ncp], sizeof(RADE_COMP) * Ncp);
+    //for (int n = 0; n < Ncp; n++) {
+    //    time_out[n] = time_in[M - Ncp + n];
+    //}
     /* Copy main symbol */
     for (int n = 0; n < M; n++) {
         time_out[Ncp + n] = time_in[n];
