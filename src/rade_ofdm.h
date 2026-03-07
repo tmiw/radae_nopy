@@ -56,7 +56,7 @@ typedef struct {
     int bottleneck;                             /* Bottleneck mode (1, 2, or 3) */
 
     /* DFT matrices - pre-computed at init */
-    RADE_COMP Winv[RADE_NC][RADE_M];           /* IDFT matrix (Tx): Nc freq -> M time */
+    RADE_COMP Winv[RADE_M][RADE_NC];           /* IDFT matrix (Tx): Nc freq -> M time */
     RADE_COMP Wfwd[RADE_NC][RADE_M];           /* DFT matrix (Rx): M time -> Nc freq */
 
     /* Carrier frequencies */

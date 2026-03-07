@@ -71,7 +71,7 @@ void rade_ofdm_init(rade_ofdm *ofdm, int bottleneck) {
     for (int c = 0; c < Nc; c++) {
         for (int n = 0; n < M; n++) {
             float theta = ofdm->w[c] * n;
-            ofdm->Winv[c][n] = rade_cscale(rade_cexp(theta), 1.0f / M);
+            ofdm->Winv[n][c] = rade_cscale(rade_cexp(theta), 1.0f / M);
         }
     }
 
@@ -101,8 +101,8 @@ void rade_ofdm_init(rade_ofdm *ofdm, int bottleneck) {
     memset(ofdm->pend, 0, sizeof(ofdm->pend));
     for (int n = 0; n < M; n++) {
         for (int c = 0; c < Nc; c++) {
-            ofdm->p[n] = rade_cadd(ofdm->p[n], rade_cmul(ofdm->P[c], ofdm->Winv[c][n]));
-            ofdm->pend[n] = rade_cadd(ofdm->pend[n], rade_cmul(ofdm->Pend[c], ofdm->Winv[c][n]));
+            ofdm->p[n] = rade_cadd(ofdm->p[n], rade_cmul(ofdm->P[c], ofdm->Winv[n][c]));
+            ofdm->pend[n] = rade_cadd(ofdm->pend[n], rade_cmul(ofdm->Pend[c], ofdm->Winv[n][c]));
         }
     }
 
@@ -214,10 +214,7 @@ void rade_ofdm_idft(const rade_ofdm *ofdm, RADE_COMP *time_out, const RADE_COMP 
     int Nc = ofdm->nc;
 
     for (int n = 0; n < M; n++) {
-        time_out[n] = rade_czero();
-        for (int c = 0; c < Nc; c++) {
-            time_out[n] = rade_cadd(time_out[n], rade_cmul(freq_in[c], ofdm->Winv[c][n]));
-        }
+        time_out[n] = rade_cdot_comp(freq_in, ofdm->Winv[n], Nc);
     }
 }
 
@@ -232,9 +229,10 @@ void rade_ofdm_insert_cp(const rade_ofdm *ofdm, RADE_COMP *time_out, const RADE_
     //    time_out[n] = time_in[M - Ncp + n];
     //}
     /* Copy main symbol */
-    for (int n = 0; n < M; n++) {
-        time_out[Ncp + n] = time_in[n];
-    }
+    memcpy(&time_out[Ncp], time_in, sizeof(RADE_COMP) * M);
+    //for (int n = 0; n < M; n++) {
+    //    time_out[Ncp + n] = time_in[n];
+    //}
 }
 
 /* Modulate one modem frame */
