@@ -15,7 +15,7 @@ set(RADE_DSP_SOURCES
 )
 
 # RADE library (Python-free)
-add_library(rade
+add_library(rade SHARED
     rade_api_nopy.c
     rade_enc.c
     rade_dec.c

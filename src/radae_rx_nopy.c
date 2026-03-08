@@ -122,6 +122,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    FILE *feoo_bits = fopen("eoo_rx.f32","wb");
+
     /* Main processing loop */
     int frame_count = 0;
     int valid_count = 0;
@@ -143,7 +145,9 @@ int main(int argc, char *argv[]) {
 
         if (has_eoo) {
             fprintf(stderr, "End-of-over detected\n");
-            /* Could process eoo_out here if needed */
+            if (feoo_bits) {
+                fwrite(eoo_out, sizeof(float), n_eoo_bits, feoo_bits);
+            }
         }
 
         frame_count++;
@@ -152,6 +156,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Processed %d modem frames, %d valid outputs\n", frame_count, valid_count);
 
     /* Cleanup */
+    if (feoo_bits) {
+        fclose(feoo_bits);
+    }
     free(rx_in);
     free(features_out);
     free(eoo_out);

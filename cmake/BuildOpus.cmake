@@ -1,6 +1,6 @@
 message(STATUS "Will build opus with FARGAN")
 
-set(CONFIGURE_COMMAND ./autogen.sh && ./configure --enable-osce --enable-dred --disable-shared --disable-doc --disable-extra-programs)
+set(CONFIGURE_COMMAND ./autogen.sh && ./configure --with-pic --enable-osce --enable-dred --disable-shared --disable-doc --disable-extra-programs)
 
 if (CMAKE_CROSSCOMPILING)
 set(CONFIGURE_COMMAND ${CONFIGURE_COMMAND} --host=${CMAKE_C_COMPILER_TARGET} --target=${CMAKE_C_COMPILER_TARGET})
@@ -15,11 +15,7 @@ if(APPLE AND BUILD_OSX_UNIVERSAL)
 # Opus ./configure doesn't behave properly when built as a universal binary;
 # build it twice and use lipo to create a universal libopus.a instead.
 ExternalProject_Add(build_opus_x86
-    DOWNLOAD_EXTRACT_TIMESTAMP YES
-    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/.cache/opus
-    SOURCE_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src-x86
-    BINARY_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src-x86
-    STAMP_DIR    ${CMAKE_SOURCE_DIR}/.cache/opus/stamp-x86
+    DOWNLOAD_EXTRACT_TIMESTAMP NO
     BUILD_IN_SOURCE 1
     PATCH_COMMAND sh -c "patch dnn/nnet.h < ${CMAKE_SOURCE_DIR}/src/opus-nnet.h.diff"
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} --host=x86_64-apple-darwin --target=x86_64-apple-darwin CFLAGS=-arch\ x86_64\ -O2\ -mmacosx-version-min=10.11
@@ -28,11 +24,7 @@ ExternalProject_Add(build_opus_x86
     URL ${OPUS_URL}
 )
 ExternalProject_Add(build_opus_arm
-    DOWNLOAD_EXTRACT_TIMESTAMP YES
-    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/.cache/opus
-    SOURCE_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src-arm
-    BINARY_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src-arm
-    STAMP_DIR    ${CMAKE_SOURCE_DIR}/.cache/opus/stamp-arm
+    DOWNLOAD_EXTRACT_TIMESTAMP NO
     BUILD_IN_SOURCE 1
     PATCH_COMMAND sh -c "patch dnn/nnet.h < ${CMAKE_SOURCE_DIR}/src/opus-nnet.h.diff"
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} --host=aarch64-apple-darwin --target=aarch64-apple-darwin CFLAGS=-arch\ arm64\ -O2\ -mmacosx-version-min=10.11
@@ -66,11 +58,7 @@ set_target_properties(opus PROPERTIES
 
 else(APPLE AND BUILD_OSX_UNIVERSAL)
 ExternalProject_Add(build_opus
-    DOWNLOAD_EXTRACT_TIMESTAMP YES
-    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/.cache/opus
-    SOURCE_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src
-    BINARY_DIR   ${CMAKE_SOURCE_DIR}/.cache/opus/src
-    STAMP_DIR    ${CMAKE_SOURCE_DIR}/.cache/opus/stamp
+    BUILD_IN_SOURCE 1
     PATCH_COMMAND sh -c "patch dnn/nnet.h < ${CMAKE_SOURCE_DIR}/src/opus-nnet.h.diff"
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND}
     BUILD_COMMAND $(MAKE)
